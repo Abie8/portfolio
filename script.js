@@ -8,3 +8,18 @@ if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: red
 // Add gentle staggered reveals and a subtle hero-card pointer glow.
 const heroCard=document.querySelector('.hero-card');
 if(heroCard && !matchMedia('(prefers-reduced-motion: reduce)').matches){heroCard.addEventListener('pointermove',e=>{const r=heroCard.getBoundingClientRect();heroCard.style.setProperty('--pointer-x',`${e.clientX-r.left}px`);heroCard.style.setProperty('--pointer-y',`${e.clientY-r.top}px`);});}
+
+
+// Scroll progress indicator, updated efficiently on scroll.
+const progressBar=document.querySelector('.scroll-progress span');
+let progressTicking=false;
+function updateScrollProgress(){
+  if(!progressBar)return;
+  const max=document.documentElement.scrollHeight-window.innerHeight;
+  const progress=max>0?window.scrollY/max:0;
+  progressBar.style.transform=`scaleX(${Math.max(0,Math.min(1,progress))})`;
+  progressTicking=false;
+}
+window.addEventListener('scroll',()=>{if(!progressTicking){window.requestAnimationFrame(updateScrollProgress);progressTicking=true}},{passive:true});
+window.addEventListener('resize',updateScrollProgress);
+updateScrollProgress();
